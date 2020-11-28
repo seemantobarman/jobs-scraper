@@ -1,17 +1,51 @@
 from bs4 import BeautifulSoup as soup
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 import urllib.request
 import ssl
 import requests
+import os
+import time
+
 
 search = input("Search For: ")
-webpage = "https://www.linkedin.com/jobs/search?keywords={}&location=Bangladesh".format(search)
 
 ssl._create_default_https_context = ssl._create_unverified_context
-wp = urllib.request.urlopen(webpage)
-pw = wp.read()
-page_soup = soup(pw, "html.parser")
 
 #LINKEDIN
+webpage = "https://www.linkedin.com/jobs/search?keywords={}&location=Bangladesh".format(search)
+
+DIR = (os.path.dirname(os.path.realpath(__file__)))
+DRIVERPATH = os.path.join(DIR,"geckodriver.exe")
+print(DRIVERPATH)
+
+#Test
+options = Options()
+options.headless = True
+driver = webdriver.Firefox(options=options, executable_path=DRIVERPATH)
+
+SCROLL_PAUSE_TIME = 0.5
+# Get scroll height
+last_height = driver.execute_script("return document.body.scrollHeight")
+driver.get(webpage)
+
+while True:
+    time.sleep(4)
+    # Scroll down to bottom
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+    # Wait to load page
+    time.sleep(SCROLL_PAUSE_TIME)
+
+    # Calculate new scroll height and compare with last scroll height
+    new_height = driver.execute_script("return document.body.scrollHeight")
+    if new_height == last_height:
+        break
+    last_height = new_height
+
+page = driver.execute_script('return document.body.innerHTML')
+page_soup = soup(''.join(page), 'html.parser')
+
 print("\n___LINKEDIN___\n")
 for jobLink in page_soup.find_all("a", {"class":"result-card__full-card-link"}):
     jobLink = jobLink.get('href')
