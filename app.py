@@ -7,13 +7,13 @@ import requests
 import os
 import time
 
-
 search = input("Search For: ")
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
 #LINKEDIN
-webpage = "https://www.linkedin.com/jobs/search?keywords={}&location=Bangladesh".format(search)
+search_linkedin = search.replace(" ","%20")
+webpage = "https://www.linkedin.com/jobs/search?keywords={}&location=Bangladesh".format(search_linkedin)
 
 DIR = (os.path.dirname(os.path.realpath(__file__)))
 DRIVERPATH = os.path.join(DIR,"geckodriver.exe")
@@ -46,7 +46,7 @@ while True:
 page = driver.execute_script('return document.body.innerHTML')
 page_soup = soup(''.join(page), 'html.parser')
 
-print("\n___LINKEDIN___\n")
+print("\n__________LINKEDIN__________\n")
 for jobLink in page_soup.find_all("a", {"class":"result-card__full-card-link"}):
     jobLink = jobLink.get('href')
     job = urllib.request.urlopen(jobLink)
@@ -73,9 +73,10 @@ for jobLink in page_soup.find_all("a", {"class":"result-card__full-card-link"}):
     print("JOB LINK: {}\n".format(jobLink))
 
 #BDJOBS
-print("\n___BDJOBS___\n")
+search_bdjobs = search.replace(" ","+")
+print("\n__________BDJOBS__________\n")
 data = {
-    'txtsearch': search,
+    'txtsearch': search_bdjobs,
     'qOT': '0',
     'hidJobSearch': 'jobsearch'
 }
