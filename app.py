@@ -8,6 +8,7 @@ import os
 import time
 
 search = input("Search For: ")
+print("\n")
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -17,7 +18,6 @@ webpage = "https://www.linkedin.com/jobs/search?keywords={}&location=Bangladesh"
 
 DIR = (os.path.dirname(os.path.realpath(__file__)))
 DRIVERPATH = os.path.join(DIR,"geckodriver.exe")
-print(DRIVERPATH)
 
 #Test
 options = Options()
